@@ -1,0 +1,4 @@
+$sudo mkdir -p /mnt/folder_to_open_iso      # create a folder(folder_to_open_iso) to store .iso contents
+$sudo mount -o loop iso_path/iso_name.iso /mnt/folder_to_open_iso     # mount iso_name.iso
+$sudo cd /mnt/folder_to_open_iso                                      
+$ls -l                                                                # all contents of iso_name.iso should be in folder_to_open_iso

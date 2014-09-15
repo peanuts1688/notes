@@ -1,0 +1,56 @@
+start samba:
+
+** before creating samba, make sure the host(windows) is able to "ping" the linux guest vmplayer/virtualbox vmnet!!!!
+
+http://2tap.com/2007/04/22/sharing-files-between-a-windows-guest-and-ubuntu-host-using-vmware-and-samba/
+
+$sudo apt-get install samba
+$sudo groupadd <user_group (ex.snoopy)>         # adding to system password file /etc/passwd
+$sudo useradd --gid <user_group (ex.snoopy)> --shell /bin/false <user  (ex.snoopy)> --home /nonexistent       # adding to system password file /etc/passwd
+  ** -g(gid)  : add defualt group of passed in parameter
+  ** -s(shell): add defualt shell of /bin/false, which allow no log in permission(to the shell, set shell to false, return false when <user> try to log in shell) to this user created. In this case, the user added is purely for the Samba's purpose.
+$sudo smbpasswd -a <user  (ex.snoopy)>        # create matching Samba account:user "snoopy" (has to be a name already in the system password file /etc/passwd)
+$mkdir <share_folder (ex. Snoopy_box)
+$sudo chown user_name:<user (ex.snoopy)> <share_folder (ex. Snoopy_box)
+$sudo chmod 775 <share_folder (ex. Snoopy_box)
+$sudo chmod g+s <share_folder (ex. Snoopy_box)           # allow both read and write
+
+  setting up the share 
+$sudo gvim /etc/samba/smb.conf
+  change/add to smb.conf : 
+# Add user name map
+    security = user
+    encrypt passwords = true
+    username map = /etc/samba/smbusers
+
+# Add samba folder
+    [<share_folder (ex. Snoopy_box)]
+    path = /home/user_name/<share_folder (ex. Snoopy_box)
+    valid users = <user (ex.snoopy)>
+    read only = No
+    create mask = 0777
+    directory mask = 0777
+
+
+==========================================================================================================
+
+to list samba users:
+$sudo pdbedit -L -v      #-L to list users, -v to verbose
+$sudo pdbedit -w -L      #-L to list users, shorter than verbose
+
+ex. 
+  $sudo pdbedit -v -u userid | grep "Password must change"
+
+$tdbdump  /etc/samba/private/secrets.tdb
+
+==========================================================================================================
+
+add smb user:
+$sudo smbpasswd -a <user_name (ex.snoopy)>   
+
+** -a to specify the user_name to be added to the local smbpasswd file, with the new passwd typed. Option is ignored if the username following is already existed in the smbpasswd file and it is then treated like a regular change passwd command. NOTE THAT THE DEFAULT PASSDB BACKENDS REQUIRE THE USER TO ALREADY EXIST IN THE SYSTEM PASSWORD FILE (usually /etc/passwd), ELSE THE REQUEST TO ADD THE USER WILL FAIL.
+
+==========================================================================================================
+
+$sudo restart smbd        # restart samba process
+

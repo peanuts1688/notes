@@ -1,0 +1,109 @@
+create system group:
+$sudo groupadd <groupName>
+
+==========================================================================================================
+
+check group:
+$sudo /etc/group
+  or
+$groups             # show all groups exist
+         <group>    # show all group members for "group"
+
+show group #id
+$getent group <userName>
+
+==========================================================================================================
+
+create system user:
+$sudo useradd <username> --shell /bin/false     # create a new user with a disabled account and without home directory
+$sudo useradd <username> --gid <groupName> --shell /bin/false <groupName> --home /nonexistent   # create a new user with a disabled account and without home directory
+
+
+  ** -g(gid)   : sets the default group for new user
+  ** -s(shell) : sets the default shell from new user
+    **/bin/true   : return 1
+    **/bin/fasle  : return 0
+
+** CAN ONLY ADD A SAMBA USER IF THE USER IS A SYSTEM USER
+
+** /sbin/nologin : when is set as the shell, if user with that shell logs in, they'll get a polite message saying 'This account is currently not available'. This message can be changed with the file /etc/nologin.txt
+
+** /bin/ture     :
+** /bin/false    : is just a binary that immediately exits, returning 0 for false, and 1 for "true", when is called. So when someone who has "false" as shell logs in, they're immediately logged out when "false" exits. Setting the shell to /bin/true has the same effect of not allowing someone to log in but "false" is probably used as a convention over "true" since it's much better at conveying the concept that person doesn't have a shell.
+
+==========================================================================================================
+
+lock a user:
+$sudo passwd -l <userName>
+
+unlock a user:
+$sudo passwd -u <userName>
+
+** /bin/false is an old shell used to deny a user's login
+
+ex. 
+  $sudo usermod -s(shell) /bin/false <userName>
+
+==========================================================================================================
+
+adding user to a group
+$sudo adduser <user> <group>
+
+==========================================================================================================
+
+removing user from a group
+$sudo deluser <user> <group>
+
+==========================================================================================================
+
+modify user:
+$sudo usermod -a -G <groupName> <userName>
+$sudo gpasswd -a <userName> <groupName>
+
+==========================================================================================================
+
+check user/group:
+
+$cat /etc/passwd 
+
+show only userNames
+$awk -F':' '{ print $1} ' /etc/passwd     
+or $awk -F: '{ print $1} ' /etc/passwd     
+      # -F: or -F':' specifies the deliminator rather than using the default "space"
+      # print $n , printing to screen the nth variable
+      # -f will display the output to specified file
+
+** awk '/search pattern1/ {Actions}
+        /search pattern2/ {Actions}' file
+**
+  >> awk is a programming language
+  >> awk reads the input files one line at a time
+  >> if search pattern is not given, awk performs the given action for each line of the input
+  >> if action not given, print all that lines that matches with the given patterns
+
+user with home directories in /home
+$cat /etc/passwd | grep "/home"
+
+pip out the output of " $cat /etc/passwd | grep "/home" " to variable "cut -d(delimiter) -f1(first field)"
+$cat /etc/passwd | grep "/home" | cut -d: -f1
+
+or
+
+$users | wc -w    # use "wc" to count "users"
+
+==========================================================================================================
+
+change user login shell for user:
+
+list shells
+$cat /etc/shells
+$more /etc/shells
+$less /etc/shells
+
+change user login shell for user
+$chsh -s(shell) <shell> <userName>
+
+ex. 
+  $chsh -s /bin/false sandbox     # change the login shell for sandbox so it has a "false" login shell, for situation when user "sandbox" is for Samba account only, where it shouldn't need to login to any shell
+
+
