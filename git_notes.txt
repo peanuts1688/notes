@@ -363,7 +363,7 @@ pulling from remote: $git pull <remote_shortname>
 **Running git pull generally fetches data from the server you originally cloned from and automatically tries to merge it into the code you're currently working on. 
 **PULL = FETCH + merge
 
-$git pull --rebase <remote_shortname>     # instead of using "$git merge" after "$git fetch" to integrate the remote branch with local, use "$git rebase" instead
+$git pull --rebase <remote_shortname> <branch>    # instead of using "$git merge" after "$git fetch" to integrate the remote branch with local, use "$git rebase" instead
 
 ex.
   $git checkout master              # switch back to local master branch
